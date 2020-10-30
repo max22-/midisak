@@ -1,7 +1,7 @@
 all: midisak
 
 midisak: main.cpp
-	g++ main.cpp -o midisak
+	g++ main.cpp -o midisak -lrtmidi
 
 .PHONY: clean
 
