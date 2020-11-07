@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     RtMidiOut *midiOut = nullptr;
     vector<unsigned char> message;
 
-    if(argc != 3) {
+    if(argc != 4) {
         cerr << "Invalid arguments" << endl;
         return EXIT_FAILURE;
     }
@@ -25,12 +25,12 @@ int main(int argc, char *argv[])
     unsigned int nPorts = midiOut->getPortCount();
     cout << "There are " << nPorts << " MIDI output ports available." << endl;
 
-    midiOut->openPort(getPortNumber(midiOut, "Arduino"));
+    midiOut->openPort(getPortNumber(midiOut, argv[1]));
 
 
     message.push_back(176);
-    message.push_back(stoi(argv[1]));
     message.push_back(stoi(argv[2]));
+    message.push_back(stoi(argv[3]));
     midiOut->sendMessage( &message );
 
     delete midiOut;
@@ -43,7 +43,7 @@ unsigned int getPortNumber(RtMidiOut *midiOut, string name)
     for (unsigned int i=0; i<nPorts; i++ ) {
         try {
             string portName = midiOut->getPortName(i);
-            if(portName.rfind("Arduino", 0) == 0)      // sort of "startsWith" : https://stackoverflow.com/questions/1878001/how-do-i-check-if-a-c-stdstring-starts-with-a-certain-string-and-convert-a
+            if(portName.rfind(name, 0) == 0)      // sort of "startsWith" : https://stackoverflow.com/questions/1878001/how-do-i-check-if-a-c-stdstring-starts-with-a-certain-string-and-convert-a
                 return i;
             
         }
@@ -53,5 +53,5 @@ unsigned int getPortNumber(RtMidiOut *midiOut, string name)
             return EXIT_FAILURE;
         }
     }
-    throw runtime_error("Port not found");
+    throw runtime_error("Port " + name + " not found");
 }
