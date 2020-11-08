@@ -1,57 +1,34 @@
 #include <iostream>
 #include <rtmidi/RtMidi.h>
+#include "send.h"
+#include "receive.h"
 
 using namespace std;
 
-unsigned int getPortNumber(RtMidiOut *midiOut, string name);
+void usage();
 
 int main(int argc, char *argv[])
 {
-    RtMidiOut *midiOut = nullptr;
-    vector<unsigned char> message;
-
-    if(argc != 4) {
-        cerr << "Invalid arguments" << endl;
-        return EXIT_FAILURE;
+    if(argc == 3 && string(argv[1]) == "-l")
+        receive(argv[2]);
+    else if(argc == 2 && string(argv[1]) == "-") {
+        cout << "Not implemented yet." << endl;;
+        return EXIT_SUCCESS;
     }
-
-    try {
-        midiOut = new RtMidiOut();
+    else if(argc == 6 && string(argv[2]) != "pc") {
+        send(argv[1], argv[2], argv[3], argv[4], argv[5]);
     }
-    catch(RtMidiError &error) {
-        error.printMessage();
-        return EXIT_FAILURE;
+    else if(argc == 5 && string(argv[2]) == "pc") {
+        send(argv[1], argv[2], argv[3], argv[4]);
     }
-    unsigned int nPorts = midiOut->getPortCount();
-    cout << "There are " << nPorts << " MIDI output ports available." << endl;
+    else usage();
 
-    midiOut->openPort(getPortNumber(midiOut, argv[1]));
-
-
-    message.push_back(176);
-    message.push_back(stoi(argv[2]));
-    message.push_back(stoi(argv[3]));
-    midiOut->sendMessage( &message );
-
-    delete midiOut;
     return EXIT_SUCCESS;
 }
 
-unsigned int getPortNumber(RtMidiOut *midiOut, string name)
+
+void usage()
 {
-    unsigned int nPorts = midiOut->getPortCount();
-    for (unsigned int i=0; i<nPorts; i++ ) {
-        try {
-            string portName = midiOut->getPortName(i);
-            if(portName.rfind(name, 0) == 0)      // sort of "startsWith" : https://stackoverflow.com/questions/1878001/how-do-i-check-if-a-c-stdstring-starts-with-a-certain-string-and-convert-a
-                return i;
-            
-        }
-        catch ( RtMidiError &error ) {
-            error.printMessage();
-            delete midiOut;
-            return EXIT_FAILURE;
-        }
-    }
-    throw runtime_error("Port " + name + " not found");
+    cerr << "Invalid arguments" << endl;
+    exit(EXIT_FAILURE);
 }
