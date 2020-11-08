@@ -17,6 +17,6 @@ void send(
     const std::string param1,
     const std::string param2 = "");
 
-void send(const std::string portName);    // send commands from stdin
+void send(const std::string portName, std::istream &stream);    // send commands from stdin
 
 #endif

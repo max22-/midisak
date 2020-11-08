@@ -1,5 +1,6 @@
 #include <rtmidi/RtMidi.h>
 #include <vector>
+#include <sstream>
 #include "send.h"
 #include "utilities.h"
 #include "midi_constants.h"
@@ -57,7 +58,22 @@ void send(const string portName, const string command, const string channel, con
 
 }
 
-void send(const string portName)
+void send(const string portName, std::istream &stream)
 {
-    cout << "Not implemented yet." << endl;
+    string line;
+    while(getline(stream, line)) {
+        stringstream ss(line);
+        string token;
+        vector<string> arguments;
+        while(ss >> token) {
+            arguments.push_back(token);
+
+        }
+        if(arguments.size() == 3)
+            send(portName, arguments.at(0), arguments.at(1), arguments.at(2));
+        else if(arguments.size() == 4)
+            send(portName, arguments.at(0), arguments.at(1), arguments.at(2), arguments.at(3));
+        else
+            cerr << "Invalid command" << endl;
+    }
 }

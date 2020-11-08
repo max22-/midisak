@@ -11,7 +11,6 @@ void receive(string portName)
 {
     RtMidiIn *midiIn;
     unsigned int portNumber;
-    cout << "receive(\"" << portName << "\")" << endl;
     try {
         midiIn = new RtMidiIn();
         portNumber = getPortNumber(midiIn, portName);
@@ -27,7 +26,6 @@ void receive(string portName)
     }
     midiIn->setCallback(&callback);
     midiIn->ignoreTypes(false, false, false);
-    cout << "\nReading MIDI input ... press <enter> to quit." << endl;
     char input;
     cin.get(input);
     delete midiIn;
