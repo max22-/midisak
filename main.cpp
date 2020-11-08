@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     if(argc == 3 && string(argv[1]) == "-l")
         receive(argv[2]);
-    else if(argc == 2 && string(argv[1]) == "-") {
-        cout << "Not implemented yet." << endl;;
+    else if(argc == 3 && string(argv[2]) == "-") {
+        send(argv[2]);
         return EXIT_SUCCESS;
     }
     else if(argc == 6 && string(argv[2]) != "pc") {
