@@ -3,13 +3,13 @@ all: midits
 midits: main.o receive.o send.o utilities.o
 	g++ main.o receive.o send.o utilities.o -o midits -lrtmidi
 
-main.o: main.cpp send.h receive.h
+main.o: main.cpp send.h receive.h utilities.h
 	g++ main.cpp -c -o main.o
 
-receive.o: receive.cpp receive.h utilities.h midi_constants.h
+receive.o: receive.cpp receive.h midi_constants.h
 	g++ receive.cpp -c -o receive.o
 
-send.o: send.cpp send.h utilities.h midi_constants.h
+send.o: send.cpp send.h midi_constants.h
 	g++ send.cpp -c -o send.o
 
 utilities.o: utilities.cpp utilities.h

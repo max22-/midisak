@@ -1,6 +1,7 @@
 #ifndef SEND_H
 #define SEND_H
 
+#include <vector>
 #include <string>
 
 void send(
@@ -10,13 +11,8 @@ void send(
     const unsigned char param1, 
     const unsigned char param2 = 255);
 
-void send(
-    const std::string portName,
-    const std::string command,
-    const std::string channel,
-    const std::string param1,
-    const std::string param2 = "");
+void send(RtMidiOut *midiOut, std::vector<std::string> arguments);
 
-void send(const std::string portName, std::istream &stream);    // send commands from stdin
+void send(RtMidiOut *midiOut, std::istream &stream);    // send commands from stdin
 
 #endif

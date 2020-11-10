@@ -1,8 +1,6 @@
 #include <rtmidi/RtMidi.h>
-#include <vector>
 #include <sstream>
 #include "send.h"
-#include "utilities.h"
 #include "midi_constants.h"
 
 using namespace std;
@@ -23,57 +21,36 @@ void send(RtMidiOut *midiOut, const unsigned char command, const unsigned char c
     midiOut->sendMessage(&message);
 }
 
-void send(const string portName, const string command, const string channel, const string param1, const string param2)
+void send(RtMidiOut *midiOut, const vector <string> arguments)
 {
-    RtMidiOut *midiOut = nullptr;
 
-    try {
-        midiOut = new RtMidiOut();
-        const unsigned int nPorts = midiOut->getPortCount();
-        midiOut->openPort(getPortNumber(midiOut, portName));
-    }
-    catch(RtMidiError &error) {
-        error.printMessage();
-        exit(EXIT_FAILURE);
-    }
-
-    const unsigned char ichannel = std::stoi(channel) - 1;
-    const unsigned char byte2 = stoi(param1), byte3 = stoi(param2);
+    const string command = arguments.at(0);
+    const unsigned char channel = std::stoi(arguments.at(1)) - 1;
+    const unsigned char byte2 = std::stoi(arguments.at(2));
+    const unsigned char byte3 = arguments.size() > 3 ? std::stoi(arguments.at(3)) : 255;
 
     if(command == "noteon")
-        send(midiOut, NOTEON, ichannel, byte2, byte3);
+        send(midiOut, NOTEON, channel, byte2, byte3);
     else if(command == "noteoff")
-        send(midiOut, NOTEOFF, ichannel, byte2, byte3);  
+        send(midiOut, NOTEOFF, channel, byte2, byte3);  
     else if(command == "cc")
-        send(midiOut, CONTROL_CHANGE, ichannel, byte2, byte3);
+        send(midiOut, CONTROL_CHANGE, channel, byte2, byte3);
     else if(command == "pc")
-        send(midiOut, PROGRAM_CHANGE, ichannel, byte2);      
-    else {
+        send(midiOut, PROGRAM_CHANGE, channel, byte2);      
+    else
         cerr << command << " : unknown command." << endl;
-        delete midiOut;
-        exit(EXIT_FAILURE);
-    }
-
-    delete midiOut;
 
 }
 
-void send(const string portName, std::istream &stream)
+void send(RtMidiOut *midiOut, std::istream &stream)
 {
     string line;
     while(getline(stream, line)) {
         stringstream ss(line);
         string token;
         vector<string> arguments;
-        while(ss >> token) {
+        while(ss >> token)
             arguments.push_back(token);
-
-        }
-        if(arguments.size() == 3)
-            send(portName, arguments.at(0), arguments.at(1), arguments.at(2));
-        else if(arguments.size() == 4)
-            send(portName, arguments.at(0), arguments.at(1), arguments.at(2), arguments.at(3));
-        else
-            cerr << "Invalid command" << endl;
+        send(midiOut, arguments);
     }
 }

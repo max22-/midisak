@@ -2,7 +2,9 @@
 #define RECEIVE_H
 
 #include <string>
+#include <iostream>
+#include <rtmidi/RtMidi.h>
 
-void receive(std::string portName);
+void receive(RtMidiIn *midiIn,  std::string portName);
 
 #endif

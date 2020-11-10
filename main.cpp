@@ -2,33 +2,57 @@
 #include <rtmidi/RtMidi.h>
 #include "send.h"
 #include "receive.h"
+#include "utilities.h"
 
 using namespace std;
 
+RtMidiIn *midiIn = nullptr;
+RtMidiOut *midiOut = nullptr;
+
 void usage();
+void cleanup();
 
 int main(int argc, char *argv[])
 {
-    if(argc == 3 && string(argv[1]) == "-l")
-        receive(argv[2]);
-    else if(argc == 3 && string(argv[2]) == "-") {
-        send(argv[1], cin);
-        return EXIT_SUCCESS;
+    try {
+        if(argc == 3 && string(argv[1]) == "-l") {
+            midiIn = new RtMidiIn();
+            string portName = argv[2];
+            unsigned int portNumber = getPortNumber(midiIn, portName);
+            midiIn->openPort(portNumber);
+            receive(midiIn, argv[2]);
+        }
+        else {
+            midiOut = new RtMidiOut();
+            string portName = argv[1];
+            midiOut->openPort(getPortNumber(midiOut, portName));
+            if(argc == 3 && string(argv[2]) == "-")
+                send(midiOut, cin);
+            else {
+                vector<string> arguments;
+                for(unsigned int i = 2; i < argc; i++)
+                    arguments.push_back(argv[i]);
+                send(midiOut, arguments);
+            }
+        }
+
     }
-    else if(argc == 6 && string(argv[2]) != "pc") {
-        send(argv[1], argv[2], argv[3], argv[4], argv[5]);
+    catch(RtMidiError &error) {
+        error.printMessage();
+        exit(EXIT_FAILURE);
     }
-    else if(argc == 5 && string(argv[2]) == "pc") {
-        send(argv[1], argv[2], argv[3], argv[4]);
+    catch(runtime_error &error) {
+        cerr << "Caught exception : " << error.what() << endl;
+        exit(EXIT_FAILURE);
     }
-    else usage();
 
     return EXIT_SUCCESS;
 }
 
-
-void usage()
+void cleanup()
 {
-    cerr << "Invalid arguments" << endl;
-    exit(EXIT_FAILURE);
-}
+    if(midiIn != nullptr)
+        delete midiIn;
+    if(midiOut != nullptr)
+        delete midiOut;
+}  

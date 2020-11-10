@@ -1,29 +1,12 @@
-#include <rtmidi/RtMidi.h>
 #include "receive.h"
-#include "utilities.h"
 #include "midi_constants.h"
 
 using namespace std;
 
 void callback(double deltatime, std::vector< unsigned char > *message, void *userData);
 
-void receive(string portName)
+void receive(RtMidiIn *midiIn, string portName)
 {
-    RtMidiIn *midiIn;
-    unsigned int portNumber;
-    try {
-        midiIn = new RtMidiIn();
-        portNumber = getPortNumber(midiIn, portName);
-        midiIn->openPort(portNumber);
-    }
-    catch (RtMidiError &error) {
-        error.printMessage();
-        exit(EXIT_FAILURE);
-    }
-    catch (runtime_error &error) {
-        cerr << error.what() << std::endl;
-        exit(EXIT_FAILURE);
-    }
     midiIn->setCallback(&callback);
     midiIn->ignoreTypes(false, false, false);
     char input;
