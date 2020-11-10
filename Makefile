@@ -1,7 +1,7 @@
-all: midisak
+all: midits
 
-midisak: main.o receive.o send.o utilities.o
-	g++ main.o receive.o send.o utilities.o -o midisak -lrtmidi
+midits: main.o receive.o send.o utilities.o
+	g++ main.o receive.o send.o utilities.o -o midits -lrtmidi
 
 main.o: main.cpp send.h receive.h
 	g++ main.cpp -c -o main.o
@@ -18,10 +18,10 @@ utilities.o: utilities.cpp utilities.h
 .PHONY: clean install uninstall
 
 clean:
-	rm -f midisak *.o
+	rm -f midits *.o
 
-install: midisak
-	cp midisak /usr/local/bin
+install: midits
+	cp midits /usr/local/bin
 
 uninstall:
-	rm -f /usr/local/bin/midisak
+	rm -f /usr/local/bin/midits
