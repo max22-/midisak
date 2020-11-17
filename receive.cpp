@@ -18,7 +18,7 @@ void callback(double deltatime, std::vector< unsigned char > *message, void *use
 {
     unsigned char byte1 = message->at(0);
     unsigned char command = byte1 & 0b11110000;
-    unsigned char channel = (byte1 & 0b00001111) + 1;
+    unsigned char channel = (byte1 & 0b00001111);
 
     switch(command) {
         case NOTEON: {

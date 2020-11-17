@@ -25,7 +25,7 @@ void send(RtMidiOut *midiOut, const vector <string> arguments)
 {
 
     const string command = arguments.at(0);
-    const unsigned char channel = std::stoi(arguments.at(1)) - 1;
+    const unsigned char channel = std::stoi(arguments.at(1));
     const unsigned char byte2 = std::stoi(arguments.at(2));
     const unsigned char byte3 = arguments.size() > 3 ? std::stoi(arguments.at(3)) : 255;
 
